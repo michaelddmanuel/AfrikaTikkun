@@ -1,25 +1,36 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ThemeProvider, CssBaseline } from '@mui/material';
+import theme from './styles/theme';
+import Layout from './components/layout/Layout';
+import Dashboard from './pages/Dashboard';
+import TripsInProgress from './pages/TripsInProgress';
+import CompletedTrips from './pages/CompletedTrips';
+import Alerts from './pages/Alerts';
+import CameraFeeds from './pages/CameraFeeds';
+import Settings from './pages/Settings';
+import Reports from './pages/Reports';
+import Help from './pages/Help';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Router>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/trips/in-progress" element={<TripsInProgress />} />
+            <Route path="/trips/completed" element={<CompletedTrips />} />
+            <Route path="/alerts" element={<Alerts />} />
+            <Route path="/camera-feeds" element={<CameraFeeds />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/reports" element={<Reports />} />
+            <Route path="/help" element={<Help />} />
+          </Routes>
+        </Layout>
+      </Router>
+    </ThemeProvider>
   );
 }
 

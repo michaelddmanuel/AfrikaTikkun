@@ -1,0 +1,1 @@
+Let's create a base64 representation of a realistic truck image that we can use in our React component

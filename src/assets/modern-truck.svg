@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="120" height="72" viewBox="0 0 120 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Truck Body -->
+  <rect x="10" y="25" width="70" height="22" rx="3" fill="#DB052B" stroke="#B40020" stroke-width="1.5"/>
+  
+  <!-- Truck Cabin -->
+  <path d="M80 25H95C96.1046 25 97 25.8954 97 27V47H80V25Z" fill="#DB052B" stroke="#B40020" stroke-width="1.5"/>
+  
+  <!-- Windshield -->
+  <path d="M83 28H92C92.5523 28 93 28.4477 93 29V38H83V28Z" fill="#F9FAFB" fill-opacity="0.85" stroke="#B40020" stroke-width="0.5"/>
+  
+  <!-- Wheels -->
+  <circle cx="30" cy="50" r="8" fill="#1D2939" stroke="#101828" stroke-width="1.5"/>
+  <circle cx="30" cy="50" r="3" fill="#475467" stroke="#344054" stroke-width="0.5"/>
+  
+  <circle cx="65" cy="50" r="8" fill="#1D2939" stroke="#101828" stroke-width="1.5"/>
+  <circle cx="65" cy="50" r="3" fill="#475467" stroke="#344054" stroke-width="0.5"/>
+  
+  <circle cx="90" cy="50" r="8" fill="#1D2939" stroke="#101828" stroke-width="1.5"/>
+  <circle cx="90" cy="50" r="3" fill="#475467" stroke="#344054" stroke-width="0.5"/>
+  
+  <!-- Headlight -->
+  <rect x="97" y="30" width="3" height="6" rx="1.5" fill="#FEF0C7" stroke="#B40020" stroke-width="0.5"/>
+  
+  <!-- Door -->
+  <line x1="80.5" y1="25" x2="80.5" y2="47" stroke="#B40020" stroke-width="0.5"/>
+  
+  <!-- Door Handle -->
+  <rect x="85" y="34" width="4" height="1" rx="0.5" fill="#667085"/>
+  
+  <!-- AECI Logo -->
+  <rect x="25" y="32" width="40" height="8" rx="2" fill="#FFFFFF" stroke="#B40020" stroke-width="0.5"/>
+  <text x="30" y="38" font-family="Arial, sans-serif" font-size="6" font-weight="bold" fill="#DB052B">AECI MINING</text>
+  
+  <!-- Trim Details -->
+  <line x1="10" y1="39.5" x2="80" y2="39.5" stroke="#B40020" stroke-width="0.5"/>
+  
+  <!-- Shadow -->
+  <ellipse cx="60" cy="58" rx="45" ry="3" fill="#1D2939" fill-opacity="0.1"/>
+</svg>

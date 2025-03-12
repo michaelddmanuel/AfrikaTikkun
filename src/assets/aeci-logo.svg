@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 200">
+  <!-- Red circle element -->
+  <circle cx="95" cy="95" r="95" fill="#E22028"/>
+  
+  <!-- Red triangular shape inside the circle -->
+  <path d="M95 140L135 70L55 70L95 140Z" fill="#AA1F23"/>
+  
+  <!-- Black "AECI" letters -->
+  <path d="M200 170L230 40H290L320 170H280L270 130H250L240 170H200Z" fill="#000000"/>
+  <path d="M340 170V40H450V70H380V90H430V120H380V140H450V170H340Z" fill="#000000"/>
+  <path d="M470 170V40H510V100L570 40H620L550 100L625 170H575L525 120L510 135V170H470Z" fill="#000000"/>
+  <path d="M640 40H680V170H640V40Z" fill="#000000"/>
+  
+  <!-- Registered trademark symbol -->
+  <circle cx="685" cy="45" r="10" fill="none" stroke="#000000" stroke-width="1.5"/>
+  <text x="685" y="50" font-family="Arial" font-size="14" text-anchor="middle" fill="#000000">R</text>
+</svg>

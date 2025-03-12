@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="500" height="150" viewBox="0 0 500 150" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .truck { fill: white; stroke: #333; stroke-width: 2; }
+    .window { fill: #b8d8f8; stroke: #333; stroke-width: 1; }
+    .wheel { fill: #333; stroke: #000; stroke-width: 1; }
+    .wheel-inner { fill: #666; stroke: #333; stroke-width: 0.5; }
+    .detail { fill: none; stroke: #333; stroke-width: 0.8; }
+  </style>
+  
+  <!-- Cab Section -->
+  <rect class="truck" x="10" y="40" width="90" height="60" rx="5" />
+  
+  <!-- Trailer Section -->
+  <rect class="truck" x="100" y="40" width="380" height="60" />
+  
+  <!-- Windshield -->
+  <path class="window" d="M30,40 L80,40 L80,60 L30,60 Z" />
+  
+  <!-- Wheels -->
+  <circle class="wheel" cx="40" cy="110" r="15" />
+  <circle class="wheel-inner" cx="40" cy="110" r="8" />
+  <circle class="wheel" cx="80" cy="110" r="15" />
+  <circle class="wheel-inner" cx="80" cy="110" r="8" />
+  
+  <circle class="wheel" cx="180" cy="110" r="15" />
+  <circle class="wheel-inner" cx="180" cy="110" r="8" />
+  
+  <circle class="wheel" cx="400" cy="110" r="15" />
+  <circle class="wheel-inner" cx="400" cy="110" r="8" />
+  
+  <!-- Details -->
+  <line class="detail" x1="100" y1="55" x2="480" y2="55" />
+  <line class="detail" x1="100" y1="75" x2="480" y2="75" />
+  
+  <!-- Connection -->
+  <rect fill="#888" x="90" y="60" width="10" height="20" />
+</svg>
