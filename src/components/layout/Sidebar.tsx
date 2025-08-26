@@ -16,30 +16,63 @@ import {
   alpha,
   Typography,
   Avatar,
-  Tooltip
+  Tooltip,
+  LinearProgress,
+  Button,
+  Alert
 } from '@mui/material';
 import { 
   Dashboard as DashboardIcon,
-  LocalShipping as TruckIcon,
+  Inventory as InventoryIcon,
+  Restaurant as FoodIcon,
   Notifications as AlertsIcon,
-  Videocam as CameraIcon,
+  LocalShipping as SuppliersIcon,
+  Receipt as RecipesIcon,
   Settings as SettingsIcon,
   Assessment as ReportsIcon,
   Help as HelpIcon,
+  Warning as WarningIcon,
   ChevronLeft as ChevronLeftIcon,
   Menu as MenuIcon,
   Search as SearchIcon,
   Close as CloseIcon,
-  PlayArrow as InProgressIcon,
-  CheckCircle as CompletedIcon,
+  LocationOn as LocationsIcon,
+  ShoppingCart as PurchasesIcon,
   ExpandLess,
   ExpandMore,
-  Person as PersonIcon
+  Person as PersonIcon,
+  Videocam as VideocamIcon,
+  Home as HomeIcon,
+  Assignment as TasksIcon,
+  People as UsersIcon,
+  Support as SupportIcon,
+  KeyboardArrowDown as ArrowDownIcon,
+  ExitToApp as LogoutIcon
 } from '@mui/icons-material';
 // Using logo from public directory
 
-const drawerWidth = 280;
-const closedDrawerWidth = 68;
+const drawerWidth = 320;
+const closedDrawerWidth = 80;
+
+// Untitled UI Color Palette
+const colors = {
+  oxfordBlue: '#002147',
+  greyBlue: '#475569',
+  lightGreyBlue: '#64748B',
+  veryLightGreyBlue: '#94A3B8',
+  paleGreyBlue: '#CBD5E1',
+  white: '#FFFFFF',
+  lightGrey: '#F8FAFC',
+  mediumGrey: '#F1F5F9',
+  borderGrey: '#E4E7EC',
+  textPrimary: '#101828',
+  textSecondary: '#667085',
+  textTertiary: '#98A2B3',
+  success: '#16a34a',
+  warning: '#d97706',
+  error: '#dc2626',
+  purple: '#7C3AED'
+};
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -51,17 +84,18 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 const SearchContainer = styled('div')(({ theme }) => ({
   position: 'relative',
-  borderRadius: 8,
-  backgroundColor: theme.palette.grey[50],
+  borderRadius: '8px',
+  backgroundColor: colors.lightGrey,
+  border: `1px solid ${colors.borderGrey}`,
+  marginBottom: theme.spacing(3),
+  marginTop: theme.spacing(2),
   '&:hover': {
-    backgroundColor: theme.palette.grey[100],
+    borderColor: colors.textTertiary,
   },
-  marginRight: theme.spacing(2),
-  marginLeft: 0,
-  width: '100%',
-  marginBottom: theme.spacing(2),
-  marginTop: theme.spacing(1),
-  border: `1px solid ${theme.palette.grey[200]}`,
+  '&:focus-within': {
+    borderColor: colors.oxfordBlue,
+    backgroundColor: colors.white,
+  },
 }));
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
@@ -75,30 +109,33 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: theme.palette.text.primary,
+  color: colors.textPrimary,
+  fontSize: '14px',
+  fontWeight: 400,
   '& .MuiInputBase-input': {
-    padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    padding: '10px 12px 10px 0',
+    paddingLeft: '40px',
     transition: theme.transitions.create('width'),
     width: '100%',
     '&::placeholder': {
-      color: theme.palette.grey[500],
+      color: colors.textTertiary,
+      fontSize: '14px',
     },
   },
 }));
 
 const StyledListItemIcon = styled(ListItemIcon)(({ theme }) => ({
-  minWidth: 42,
+  minWidth: 20,
   '& .MuiSvgIcon-root': {
-    color: theme.palette.grey[600],
+    color: colors.textSecondary,
     fontSize: 20,
   },
 }));
 
 const StyledActiveListItemIcon = styled(ListItemIcon)(({ theme }) => ({
-  minWidth: 42,
+  minWidth: 20,
   '& .MuiSvgIcon-root': {
-    color: theme.palette.error.main, // Using red accent color
+    color: colors.error,
     fontSize: 20,
   },
 }));
@@ -112,9 +149,49 @@ const Logo = styled('div')(({ theme }) => ({
 const UserProfileSection = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
-  padding: theme.spacing(2),
+  padding: '16px',
   marginTop: 'auto',
-  borderTop: `1px solid ${theme.palette.grey[200]}`,
+  borderTop: `1px solid ${colors.borderGrey}`,
+  backgroundColor: colors.white,
+}));
+
+const MenuItemButton = styled(ListItemButton)(({ theme, active }: { theme?: any; active?: boolean }) => ({
+  borderRadius: '8px',
+  marginBottom: '4px',
+  padding: '12px 16px',
+  minHeight: '44px',
+  backgroundColor: 'transparent',
+  '&:hover': {
+    backgroundColor: colors.lightGrey,
+  },
+  '& .MuiListItemText-primary': {
+    fontSize: '16px',
+    fontWeight: 500,
+    color: colors.textPrimary,
+    lineHeight: '24px',
+  },
+}));
+
+const UsageCard = styled(Box)(({ theme }) => ({
+  backgroundColor: colors.lightGrey,
+  borderRadius: '12px',
+  padding: '16px',
+  margin: '16px 0',
+  border: `1px solid ${colors.borderGrey}`,
+}));
+
+const UserCard = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  padding: '12px 16px',
+  borderRadius: '8px',
+  backgroundColor: colors.lightGrey,
+  border: `1px solid ${colors.borderGrey}`,
+  margin: '16px 0',
+  cursor: 'pointer',
+  '&:hover': {
+    backgroundColor: colors.mediumGrey,
+  },
 }));
 
 interface SidebarProps {
@@ -125,24 +202,46 @@ interface SidebarProps {
 function Sidebar({ open, toggleDrawer }: SidebarProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const [tripsOpen, setTripsOpen] = useState(false);
+  const [openSubmenus, setOpenSubmenus] = useState<{[key: string]: boolean}>({});
   const [searchValue, setSearchValue] = useState('');
 
-  const handleTripsClick = () => {
-    setTripsOpen(!tripsOpen);
+  const handleItemClick = (path: string, hasSubItems: boolean = false, itemId?: string) => {
+    if (hasSubItems && itemId) {
+      setOpenSubmenus(prev => ({
+        ...prev,
+        [itemId]: !prev[itemId]
+      }));
+      
+      // Navigate only if we're closing the submenu or it's not open yet
+      if (!openSubmenus[itemId]) {
+        navigate(path);
+      }
+    } else {
+      // Always navigate for regular menu items
+      navigate(path);
+    }
   };
+  
+  // Renamed but keeping the function for compatibility with existing code
 
   const menuItems = [
-    { text: 'Dashboard', icon: <DashboardIcon />, path: '/' },
-    { text: 'Trips', icon: <TruckIcon />, path: '/trips', subItems: [
-      { text: 'Trips in Progress', icon: <InProgressIcon />, path: '/trips/in-progress' },
-      { text: 'Completed Trips', icon: <CompletedIcon />, path: '/trips/completed' },
+    { text: 'Inventory Dashboard', icon: <DashboardIcon />, path: '/dashboard', hasDropdown: true },
+    { text: 'Inventory Management', icon: <InventoryIcon />, path: '/inventory-analytics', hasDropdown: true, subItems: [
+      { text: 'Analytics Dashboard', icon: <DashboardIcon />, path: '/inventory-analytics' },
+      { text: 'Usage Tracking', icon: <InventoryIcon />, path: '/inventory-tracking' },
     ]},
-    { text: 'Alerts', icon: <AlertsIcon />, path: '/alerts' },
-    { text: 'Camera Feeds', icon: <CameraIcon />, path: '/camera-feeds' },
-    { text: 'Reports', icon: <ReportsIcon />, path: '/reports' },
-    { text: 'Settings', icon: <SettingsIcon />, path: '/settings' },
-    { text: 'Help/Support', icon: <HelpIcon />, path: '/help' },
+    { text: 'Inventory Monitoring', icon: <VideocamIcon />, path: '/inventory-monitoring', hasDropdown: false },
+    { text: 'Outlier Detection', icon: <WarningIcon />, path: '/outlier-detection', hasDropdown: false },
+    { text: 'Food Items', icon: <FoodIcon />, path: '/food-items', hasDropdown: false },
+    { text: 'Recipes', icon: <RecipesIcon />, path: '/recipes', hasDropdown: false },
+    { text: 'Suppliers', icon: <SuppliersIcon />, path: '/suppliers', hasDropdown: false },
+    { text: 'Locations', icon: <LocationsIcon />, path: '/locations', hasDropdown: false },
+    { text: 'Purchases', icon: <PurchasesIcon />, path: '/purchases', hasDropdown: false },
+    { text: 'Reports', icon: <ReportsIcon />, path: '/reports', hasDropdown: false },
+  ];
+
+  const bottomMenuItems = [
+    { text: 'Help/Support', icon: <SupportIcon />, path: '/help' },
   ];
 
   const handleClearSearch = () => {
@@ -178,191 +277,293 @@ function Sidebar({ open, toggleDrawer }: SidebarProps) {
       variant="permanent"
       anchor="left"
     >
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          px: open ? 3 : 1.5,
-          py: 2,
-          mb: 2
-        }}
-      >
-        <Logo>
+      {/* Header Section */}
+      <Box sx={{ p: 3, borderBottom: `1px solid ${colors.borderGrey}` }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: open ? 'flex-start' : 'center', mb: 2 }}>
           <Box 
             component="img"
-            src={open ? "/acei logo 44.svg" : "/ACEI Logo closed.svg"} 
-            alt="AECI Logo" 
+            src={open ? "/Africa Logo open.svg" : "/Africa Logo closed.svg"}
+            alt="Africa Logo" 
             sx={{ 
-              height: open ? 45 : 40,
-              display: 'block',
-              transition: 'height 0.3s'
+              height: open ? 'auto' : 32,
+              width: open ? '100%' : 32,
+              maxWidth: open ? '200px' : '32px'
             }}
           />
-        </Logo>
+        </Box>
       </Box>
+      {/* Search Section - Only show when sidebar is open */}
       {open && (
-        <Box sx={{ px: 3, pt: 0, pb: 1 }}>
+        <Box sx={{ px: 3, pt: 2, pb: 1 }}>
           <SearchContainer>
             <SearchIconWrapper>
-              <SearchIcon sx={{ color: 'grey.500', fontSize: 20 }} />
+              <SearchIcon sx={{ color: colors.textTertiary, fontSize: 20 }} />
             </SearchIconWrapper>
             <StyledInputBase
-              placeholder="Search..."
+              placeholder="Search"
               value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-              endAdornment={
-                searchValue && (
-                  <IconButton size="small" onClick={handleClearSearch} sx={{ mr: 1 }}>
-                    <CloseIcon fontSize="small" sx={{ color: 'grey.500' }} />
-                  </IconButton>
-                )
-              }
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchValue(e.target.value)}
               fullWidth
               inputProps={{ 'aria-label': 'search' }}
             />
           </SearchContainer>
         </Box>
       )}
-      <Box sx={{ flex: 1, overflowY: 'auto' }}>
-        <List sx={{ px: open ? 2 : 1 }}>
+      {/* Main Navigation */}
+      <Box sx={{ flex: 1, overflowY: open ? 'auto' : 'hidden', px: open ? 3 : 1 }}>
+        <List sx={{ py: 1 }}>
           {menuItems.map((item) => (
-            item.subItems ? (
-              <React.Fragment key={item.text}>
-                <ListItem disablePadding>
-                  <Tooltip title={open ? '' : item.text} placement="right">
-                    <ListItemButton 
-                      onClick={handleTripsClick}
-                      sx={{
-                        borderRadius: 1,
-                        mb: 0.5,
-                        py: 1,
-                        px: open ? 2 : 1,
-                        justifyContent: open ? 'initial' : 'center',
-                        color: isActive(item.path) ? 'error.main' : 'grey.700',
-                        '&:hover': {
-                          bgcolor: 'grey.100',
-                        },
-                      }}
+            open ? (
+              item.subItems ? (
+                <React.Fragment key={item.text}>
+                  <ListItem disablePadding>
+                    <MenuItemButton 
+                      onClick={() => handleItemClick(item.path, true, item.text)}
+                      sx={{ width: '100%' }}
                     >
-                      {isActive(item.path) ? (
-                        <StyledActiveListItemIcon sx={{ minWidth: open ? 42 : 0, mr: open ? 3 : 0 }}>{item.icon}</StyledActiveListItemIcon>
-                      ) : (
-                        <StyledListItemIcon sx={{ minWidth: open ? 42 : 0, mr: open ? 3 : 0 }}>{item.icon}</StyledListItemIcon>
-                      )}
-                      {open && (
-                        <ListItemText 
-                          primary={
-                            <Typography 
-                              variant="body2" 
-                              fontWeight={isActive(item.path) ? 600 : 500}
-                            >
-                              {item.text}
-                            </Typography>
-                          } 
-                        />
-                      )}
-                      {open && (tripsOpen ? <ExpandLess sx={{ color: 'grey.500', fontSize: 20 }} /> : <ExpandMore sx={{ color: 'grey.500', fontSize: 20 }} />)}
-                    </ListItemButton>
-                  </Tooltip>
-                </ListItem>
-                <Collapse in={tripsOpen} timeout="auto" unmountOnExit>
-                  <List component="div" disablePadding>
-                    {item.subItems.map((subItem) => (
-                      <ListItem key={subItem.text} disablePadding>
-                        <Tooltip title={open ? '' : subItem.text} placement="right">
-                          <ListItemButton 
+                      <ListItemIcon sx={{ minWidth: 24, mr: 2, color: colors.textSecondary }}>
+                        {item.icon}
+                      </ListItemIcon>
+                      <ListItemText 
+                        primary={item.text}
+                        sx={{
+                          '& .MuiListItemText-primary': {
+                            fontSize: '16px',
+                            fontWeight: 500,
+                            color: colors.textPrimary
+                          }
+                        }}
+                      />
+                      {openSubmenus[item.text] ? 
+                        <ExpandLess sx={{ color: colors.textTertiary, fontSize: 20 }} /> : 
+                        <ArrowDownIcon sx={{ color: colors.textTertiary, fontSize: 20 }} />
+                      }
+                    </MenuItemButton>
+                  </ListItem>
+                  <Collapse in={openSubmenus[item.text]} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                      {item.subItems.map((subItem) => (
+                        <ListItem key={subItem.text} disablePadding>
+                          <MenuItemButton 
+                            onClick={() => handleItemClick(subItem.path)}
                             sx={{ 
-                              pl: open ? 7 : 1,
-                              borderRadius: 1,
-                              py: 0.75,
-                              mb: 0.5,
-                              justifyContent: open ? 'initial' : 'center',
-                              color: isActive(subItem.path) ? 'error.main' : 'grey.700',
+                              pl: 6,
+                              backgroundColor: isActive(subItem.path) ? colors.lightGrey : 'transparent',
                               '&:hover': {
-                                bgcolor: 'grey.100',
+                                backgroundColor: colors.lightGrey,
                               },
                             }}
-                            onClick={() => navigate(subItem.path)}
                           >
-                            <ListItemIcon sx={{ minWidth: open ? 30 : 0, color: 'inherit', mr: open ? 2 : 0 }}>
+                            <ListItemIcon sx={{ minWidth: 20, mr: 2, color: colors.textSecondary }}>
                               {subItem.icon}
                             </ListItemIcon>
-                            {open && (
-                              <ListItemText 
-                                primary={
-                                  <Typography 
-                                    variant="body2" 
-                                    fontWeight={isActive(subItem.path) ? 600 : 500}
-                                    fontSize="0.875rem"
-                                  >
-                                    {subItem.text}
-                                  </Typography>
-                                } 
-                              />
-                            )}
-                          </ListItemButton>
-                        </Tooltip>
-                      </ListItem>
-                    ))}
-                  </List>
-                </Collapse>
-              </React.Fragment>
-            ) : (
-              <ListItem key={item.text} disablePadding>
-                <Tooltip title={open ? '' : item.text} placement="right">
-                  <ListItemButton 
-                    onClick={() => navigate(item.path)}
-                    sx={{
-                      borderRadius: 1,
-                      mb: 0.5,
-                      py: 1,
-                      px: open ? 2 : 1,
-                      justifyContent: open ? 'initial' : 'center',
-                      color: isActive(item.path) ? 'error.main' : 'grey.700',
+                            <ListItemText 
+                              primary={subItem.text}
+                              sx={{
+                                '& .MuiListItemText-primary': {
+                                  fontSize: '14px',
+                                  fontWeight: 400,
+                                  color: colors.textSecondary
+                                }
+                              }}
+                            />
+                          </MenuItemButton>
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Collapse>
+                </React.Fragment>
+              ) : (
+                <ListItem key={item.text} disablePadding>
+                  <MenuItemButton 
+                    onClick={() => handleItemClick(item.path)}
+                    sx={{ 
+                      width: '100%',
+                      backgroundColor: isActive(item.path) ? colors.lightGrey : 'transparent',
                       '&:hover': {
-                        bgcolor: 'grey.100',
+                        backgroundColor: colors.lightGrey,
                       },
                     }}
                   >
-                    {isActive(item.path) ? (
-                      <StyledActiveListItemIcon sx={{ minWidth: open ? 42 : 0, mr: open ? 3 : 0 }}>{item.icon}</StyledActiveListItemIcon>
-                    ) : (
-                      <StyledListItemIcon sx={{ minWidth: open ? 42 : 0, mr: open ? 3 : 0 }}>{item.icon}</StyledListItemIcon>
-                    )}
-                    {open && (
-                      <ListItemText 
-                        primary={
-                          <Typography 
-                            variant="body2" 
-                            fontWeight={isActive(item.path) ? 600 : 500}
-                          >
-                            {item.text}
-                          </Typography>
-                        } 
-                      />
-                    )}
-                  </ListItemButton>
-                </Tooltip>
+                    <ListItemIcon sx={{ minWidth: 24, mr: 2, color: colors.textSecondary }}>
+                      {item.icon}
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary={item.text}
+                      sx={{
+                        '& .MuiListItemText-primary': {
+                          fontSize: '16px',
+                          fontWeight: 500,
+                          color: colors.textPrimary
+                        }
+                      }}
+                    />
+                  </MenuItemButton>
+                </ListItem>
+              )
+            ) : (
+              // Closed sidebar - only show main navigation icons centered
+              <ListItem key={item.text} disablePadding sx={{ mb: 1 }}>
+                <MenuItemButton 
+                  onClick={() => handleItemClick(item.path)}
+                  sx={{ 
+                    width: '100%',
+                    justifyContent: 'center',
+                    minHeight: 48,
+                    borderRadius: '8px',
+                    backgroundColor: isActive(item.path) ? colors.lightGrey : 'transparent',
+                    '&:hover': {
+                      backgroundColor: colors.lightGrey,
+                    },
+                  }}
+                >
+                  <ListItemIcon sx={{ 
+                    minWidth: 'auto', 
+                    color: isActive(item.path) ? colors.oxfordBlue : colors.textSecondary,
+                    justifyContent: 'center'
+                  }}>
+                    {item.icon}
+                  </ListItemIcon>
+                </MenuItemButton>
               </ListItem>
             )
           ))}
         </List>
+
+        {/* Bottom Menu Items - Only show in open state */}
+        {open && (
+          <Box sx={{ mt: 'auto', pt: 2, borderTop: `1px solid ${colors.borderGrey}` }}>
+            <List sx={{ py: 0 }}>
+              {bottomMenuItems.map((item) => (
+                <ListItem key={item.text} disablePadding>
+                  <MenuItemButton 
+                    onClick={() => handleItemClick(item.path)}
+                    sx={{ 
+                      width: '100%',
+                      backgroundColor: isActive(item.path) ? colors.lightGrey : 'transparent',
+                      '&:hover': {
+                        backgroundColor: colors.lightGrey,
+                      },
+                    }}
+                  >
+                    <ListItemIcon sx={{ minWidth: 24, mr: 2, color: colors.textSecondary }}>
+                      {item.icon}
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary={item.text}
+                      sx={{
+                        '& .MuiListItemText-primary': {
+                          fontSize: '16px',
+                          fontWeight: 500,
+                          color: colors.textPrimary
+                        }
+                      }}
+                    />
+                  </MenuItemButton>
+                </ListItem>
+              ))}
+            </List>
+          </Box>
+        )}
       </Box>
-      <UserProfileSection>
-        <Avatar sx={{ width: 40, height: 40, bgcolor: 'grey.100', mr: 2, border: '1px solid', borderColor: 'grey.200' }}>
-          <PersonIcon sx={{ color: 'grey.600' }} />
-        </Avatar>
-        <Box>
-          <Typography variant="body2" fontWeight={600} color="text.primary">John Smith</Typography>
-          <Typography variant="caption" color="text.secondary">Administrator</Typography>
-        </Box>
-        <Tooltip title="Settings">
-          <IconButton size="small" sx={{ ml: 'auto' }}>
-            <SettingsIcon fontSize="small" sx={{ color: 'grey.500' }} />
-          </IconButton>
-        </Tooltip>
-      </UserProfileSection>
+
+      {/* Usage Card and User Profile - Only show when sidebar is open */}
+      {open && (
+        <>
+          {/* Usage Card */}
+          <Box sx={{ p: 1.5 }}>
+            <UsageCard>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
+              <Typography sx={{ fontSize: '14px', fontWeight: 600, color: colors.textPrimary }}>
+                Alert Notification
+              </Typography>
+              <IconButton size="small" sx={{ p: 0 }}>
+                <CloseIcon sx={{ fontSize: 16, color: colors.textTertiary }} />
+              </IconButton>
+            </Box>
+            <Typography sx={{ fontSize: '14px', color: colors.textSecondary, mb: 2, lineHeight: '20px' }}>
+              Outlier detection noted in location tracking. Review required.
+            </Typography>
+            <LinearProgress 
+              variant="determinate" 
+              value={80} 
+              sx={{ 
+                height: 8, 
+                borderRadius: 4, 
+                mb: 2,
+                backgroundColor: colors.borderGrey,
+                '& .MuiLinearProgress-bar': {
+                  backgroundColor: '#EF4444',
+                  borderRadius: 4
+                }
+              }} 
+            />
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <Button 
+                variant="text" 
+                size="small" 
+                sx={{ 
+                  fontSize: '14px', 
+                  fontWeight: 500, 
+                  color: colors.textSecondary,
+                  textTransform: 'none',
+                  p: 0,
+                  minWidth: 'auto'
+                }}
+              >
+                Dismiss
+              </Button>
+              <Button 
+                variant="text" 
+                size="small" 
+                sx={{ 
+                  fontSize: '14px', 
+                  fontWeight: 600, 
+                  color: '#EF4444',
+                  textTransform: 'none',
+                  p: 0,
+                  minWidth: 'auto'
+                }}
+              >
+                Review Details
+              </Button>
+            </Box>
+          </UsageCard>
+          </Box>
+
+          {/* User Profile Section */}
+          <Box sx={{ p: 3 }}>
+            <UserCard>
+              <Avatar 
+                src="/api/placeholder/40/40" 
+                sx={{ 
+                  width: 40, 
+                  height: 40, 
+                  mr: 2
+                }}
+              />
+              <Box sx={{ flex: 1 }}>
+                <Typography sx={{ 
+                  fontSize: '14px', 
+                  fontWeight: 600, 
+                  color: colors.textPrimary,
+                  lineHeight: '20px'
+                }}>
+                  John Smith
+                </Typography>
+                <Typography sx={{ 
+                  fontSize: '14px', 
+                  color: colors.textSecondary,
+                  lineHeight: '20px'
+                }}>
+                  Administrator
+                </Typography>
+              </Box>
+              <LogoutIcon sx={{ color: colors.textTertiary, fontSize: 20 }} />
+            </UserCard>
+          </Box>
+        </>
+      )}
     </Drawer>
   );
 }

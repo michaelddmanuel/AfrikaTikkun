@@ -14,12 +14,9 @@ import {
   TextField,
   Button,
   Grid,
-  Card,
-  CardContent,
   List,
   ListItem,
   ListItemText,
-  ListItemIcon,
   Tabs,
   Tab,
   Tooltip,
@@ -81,7 +78,7 @@ export default function Settings() {
   const [email, setEmail] = useState('john.doe@example.com');
   const [phone, setPhone] = useState('+1 (555) 123-4567');
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
   };
 
@@ -218,7 +215,7 @@ export default function Settings() {
                   <TextField
                     fullWidth
                     label="Company"
-                    defaultValue="ACEI Mining Corporation"
+                    defaultValue="Africa Corporation"
                     variant="outlined"
                   />
                 </Grid>
@@ -296,7 +293,7 @@ export default function Settings() {
                     <VolumeUpIcon sx={{ mr: 1, color: 'text.secondary' }} />
                     <Slider
                       value={alertVolume}
-                      onChange={(e, newValue) => setAlertVolume(newValue as number)}
+                      onChange={(_e, newValue) => setAlertVolume(newValue as number)}
                       disabled={!notificationsEnabled}
                       aria-labelledby="alert-volume-slider"
                     />
@@ -530,7 +527,7 @@ export default function Settings() {
               <Typography gutterBottom>Map Refresh Rate (seconds)</Typography>
               <Slider
                 value={refreshRate}
-                onChange={(e, newValue) => setRefreshRate(newValue as number)}
+                onChange={(_e, newValue) => setRefreshRate(newValue as number)}
                 aria-labelledby="refresh-rate-slider"
                 valueLabelDisplay="auto"
                 step={5}

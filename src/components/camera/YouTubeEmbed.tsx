@@ -8,6 +8,7 @@ interface YouTubeEmbedProps {
   width?: string | number;
   height?: string | number;
   autoplay?: boolean;
+  loop?: boolean;
 }
 
 const YouTubeEmbed: React.FC<YouTubeEmbedProps> = ({
@@ -16,12 +17,20 @@ const YouTubeEmbed: React.FC<YouTubeEmbedProps> = ({
   width = '100%',
   height = '220px',
   autoplay = false,
+  loop = true,
 }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
   // Extract YouTube video ID from URL
   const getYouTubeVideoId = (url: string): string | null => {
+    // Handle YouTube shorts URLs
+    if (url.includes('youtube.com/shorts/')) {
+      const shortsMatch = url.match(/youtube\.com\/shorts\/([\w-]{11})/);
+      return shortsMatch ? shortsMatch[1] : null;
+    }
+    
+    // Handle regular YouTube URLs
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     const match = url.match(regExp);
     return (match && match[2].length === 11) ? match[2] : null;
@@ -119,7 +128,7 @@ const YouTubeEmbed: React.FC<YouTubeEmbedProps> = ({
       <iframe
         width="100%"
         height="100%"
-        src={`https://www.youtube.com/embed/${videoId}?autoplay=${autoplay ? 1 : 0}&mute=1`}
+        src={`https://www.youtube.com/embed/${videoId}?autoplay=${autoplay ? 1 : 0}&mute=1${loop ? `&loop=1&playlist=${videoId}` : ''}`}
         title={title || 'YouTube video player'}
         frameBorder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

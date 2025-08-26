@@ -32,7 +32,7 @@ export const mockTrips: Trip[] = [
     destinationAddress: 'Kimberley Mine, Northern Cape, South Africa',
     destinationCoordinates: { lat: -28.7282, lng: 24.7499 },
     clientName: 'Darrell Steward',
-    clientCompany: 'ACEI Mining Solutions',
+    clientCompany: 'Africa Mining Solutions',
     clientPhotoUrl: 'https://randomuser.me/api/portraits/men/32.jpg',
     status: 'normal',
     lastUpdated: '2 mins ago',

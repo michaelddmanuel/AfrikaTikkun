@@ -18,9 +18,22 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types"
+    ],
+    "paths": {
+      "@mui/material/*": ["./node_modules/@mui/material/*"],
+      "@mui/icons-material/*": ["./node_modules/@mui/icons-material/*"],
+      "lucide-react": ["./node_modules/lucide-react/dist/esm/lucide-react"]
+    }
   },
   "include": [
     "src"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/node_modules/*"
   ]
 }

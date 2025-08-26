@@ -17,9 +17,9 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
   }),
   marginLeft: 0,
   width: `calc(100% - ${closedDrawerWidth}px)`,
-  height: '100vh',
-  overflow: 'auto',
-  backgroundColor: theme.palette.background.default,
+  minHeight: '100vh', // Changed from height to minHeight
+  overflow: 'visible', // Changed from auto to visible to prevent measurement issues
+  backgroundColor: '#ffffff',
   ...(open && {
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.easeOut,
@@ -48,6 +48,17 @@ function Layout({ children }: LayoutProps) {
   const toggleDrawer = () => {
     setOpen(!open);
   };
+
+  // Add useEffect hook to handle DOM measurements after render
+  React.useEffect(() => {
+    // Small delay to ensure DOM is fully rendered
+    const timer = setTimeout(() => {
+      // Force a repaint to ensure measurements are accurate
+      window.dispatchEvent(new Event('resize'));
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, [open]);
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -80,7 +91,7 @@ function Layout({ children }: LayoutProps) {
       </Box>
       
       <Main open={open}>
-        <Box sx={{ mt: 2 }}>{children}</Box>
+        <Box sx={{ mt: 2, position: 'relative' }}>{children}</Box>
       </Main>
     </Box>
   );

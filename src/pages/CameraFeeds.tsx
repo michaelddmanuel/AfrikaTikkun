@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Box, 
   Grid, 
@@ -19,7 +19,6 @@ import {
   InputLabel,
   SelectChangeEvent,
   CircularProgress,
-  Tooltip,
   Avatar
 } from '@mui/material';
 import { 
@@ -29,20 +28,26 @@ import {
   FullscreenExit as FullscreenExitIcon,
   PlayArrow as PlayIcon,
   Pause as PauseIcon,
-  LocalShipping as TruckIcon,
+  Restaurant as KitchenIcon,
   YouTube as YouTubeIcon,
   Image as ImageIcon,
-  History as HistoryIcon
+  History as HistoryIcon,
+  Kitchen as KitchenAreaIcon,
+  Inventory as InventoryIcon,
+  Warehouse as WarehouseIcon,
+  Cabin as FreezerIcon,
+  LocalShipping as ReceivingIcon,
+  DirectionsCar as TruckIcon
 } from '@mui/icons-material';
 import YouTubeEmbed from '../components/camera/YouTubeEmbed';
-import { Trip, mockTrips } from '../mock-data/trips';
+import { mockLocations } from '../mock-data/locations';
 
 // Mock camera feed data
 interface CameraFeed {
   id: string;
   name: string;
-  tripId: string;
-  type: 'cabin' | 'cargo' | 'exterior' | 'dock';
+  locationId: string;
+  type: 'kitchen' | 'storage' | 'freezer' | 'receiving' | 'dock' | 'cabin' | 'cargo' | 'exterior';
   lastUpdated: string;
   mediaUrl: string;
   isLive: boolean;
@@ -53,170 +58,233 @@ interface CameraFeed {
 const mockCameraFeeds: CameraFeed[] = [
   {
     id: 'CAM-001',
-    name: 'Cabin View',
-    tripId: 'EV-2017002346',
-    type: 'cabin',
-    lastUpdated: '2025-03-12T14:40:00Z',
-    mediaUrl: 'https://www.youtube.com/watch?v=trH2lR_Zk38',
+    name: 'Main Kitchen Area',
+    locationId: 'LOC-001',
+    type: 'kitchen',
+    lastUpdated: '2025-08-25T13:40:00Z',
+    mediaUrl: 'https://www.youtube.com/watch?v=qLkACxD6wNY',
     isLive: true,
     mediaType: 'youtube',
-    description: 'Front-facing cabin camera with driver monitoring'
+    description: 'Main preparation area with staff activity monitoring'
   },
   {
     id: 'CAM-002',
-    name: 'Cargo Hold',
-    tripId: 'EV-2017002346',
-    type: 'cargo',
-    lastUpdated: '2025-03-12T14:39:00Z',
-    mediaUrl: 'https://www.youtube.com/watch?v=vrP8lorTwZg',
+    name: 'Dry Storage',
+    locationId: 'LOC-001',
+    type: 'storage',
+    lastUpdated: '2025-08-25T13:39:00Z',
+    mediaUrl: 'https://www.youtube.com/watch?v=dHcxTmU6atk',
     isLive: true,
     mediaType: 'youtube',
-    description: 'Rear camera monitoring cargo security'
+    description: 'Main dry goods storage area with inventory racks'
   },
   {
     id: 'CAM-003',
-    name: 'Exterior Front',
-    tripId: 'EV-2017002346',
-    type: 'exterior',
-    lastUpdated: '2025-03-12T14:41:00Z',
-    mediaUrl: 'https://www.youtube.com/watch?v=u46w7h1nVGk',
+    name: 'Walk-in Freezer',
+    locationId: 'LOC-001',
+    type: 'freezer',
+    lastUpdated: '2025-08-25T13:41:00Z',
+    mediaUrl: 'https://www.youtube.com/watch?v=zolQCp3OTMI',
     isLive: true,
     mediaType: 'youtube',
-    description: 'Front camera showing road conditions'
+    description: 'Main freezer with temperature monitoring'
   },
   {
     id: 'CAM-004',
-    name: 'Dock Camera A',
-    tripId: 'EV-2017002346',
-    type: 'dock',
-    lastUpdated: '2025-03-12T14:36:00Z',
-    mediaUrl: 'https://www.youtube.com/watch?v=yuGVuWrBWjA',
+    name: 'Receiving Bay',
+    locationId: 'LOC-001',
+    type: 'receiving',
+    lastUpdated: '2025-08-25T13:36:00Z',
+    mediaUrl: 'https://www.youtube.com/shorts/tJOHCAOSgSQ',
     isLive: true,
     mediaType: 'youtube',
-    description: 'Loading dock entrance camera monitoring arrivals'
+    description: 'Loading dock for incoming food deliveries'
   },
   {
     id: 'CAM-005',
-    name: 'Dock Camera B',
-    tripId: 'EV-2017002347',
-    type: 'dock',
-    lastUpdated: '2025-03-12T14:35:00Z',
-    mediaUrl: 'https://www.youtube.com/watch?v=trH2lR_Zk38',
+    name: 'Secondary Storage',
+    locationId: 'LOC-002',
+    type: 'storage',
+    lastUpdated: '2025-08-25T13:35:00Z',
+    mediaUrl: 'https://www.youtube.com/watch?v=qLkACxD6wNY',
     isLive: true,
     mediaType: 'youtube',
-    description: 'Loading dock exit surveillance'
+    description: 'Overflow storage area for non-perishable goods'
   },
   {
     id: 'CAM-006',
-    name: 'Cabin Camera',
-    tripId: 'EV-2017002347',
-    type: 'cabin',
-    lastUpdated: '2025-03-12T14:38:00Z',
-    mediaUrl: 'https://www.youtube.com/watch?v=trH2lR_Zk38',
+    name: 'Prep Kitchen',
+    locationId: 'LOC-002',
+    type: 'kitchen',
+    lastUpdated: '2025-08-25T13:38:00Z',
+    mediaUrl: 'https://www.youtube.com/watch?v=dHcxTmU6atk',
     isLive: true,
     mediaType: 'youtube',
-    description: 'Interior cabin view with driver monitoring'
+    description: 'Food preparation area with staff activity'
   },
   {
     id: 'CAM-007',
-    name: 'Cargo Hold',
-    tripId: 'EV-2017002347',
-    type: 'cargo',
-    lastUpdated: '2025-03-12T14:36:00Z',
-    mediaUrl: 'https://www.youtube.com/watch?v=vrP8lorTwZg',
+    name: 'Cold Storage',
+    locationId: 'LOC-002',
+    type: 'freezer',
+    lastUpdated: '2025-08-25T13:36:00Z',
+    mediaUrl: 'https://www.youtube.com/watch?v=zolQCp3OTMI',
     isLive: true,
     mediaType: 'youtube',
-    description: 'Rear view of cargo compartment'
+    description: 'Refrigerated storage for perishable inventory'
   },
   {
     id: 'CAM-008',
-    name: 'Dock Camera C',
-    tripId: 'EV-2017002348',
-    type: 'dock',
-    lastUpdated: '2025-03-12T14:32:00Z',
-    mediaUrl: 'https://www.youtube.com/watch?v=vrP8lorTwZg',
+    name: 'Receiving Area',
+    locationId: 'LOC-003',
+    type: 'receiving',
+    lastUpdated: '2025-08-25T13:32:00Z',
+    mediaUrl: 'https://www.youtube.com/shorts/tJOHCAOSgSQ',
     isLive: true,
     mediaType: 'youtube',
-    description: 'Loading dock bay 3 with active loading operations'
+    description: 'Supplier delivery entrance with check-in station'
   },
   {
     id: 'CAM-009',
-    name: 'Cabin View',
-    tripId: 'EV-2017002348',
-    type: 'cabin',
-    lastUpdated: '2025-03-12T14:40:00Z',
-    mediaUrl: 'https://www.youtube.com/watch?v=trH2lR_Zk38',
+    name: 'Main Kitchen',
+    locationId: 'LOC-003',
+    type: 'kitchen',
+    lastUpdated: '2025-08-25T13:40:00Z',
+    mediaUrl: 'https://www.youtube.com/watch?v=qLkACxD6wNY',
     isLive: true,
     mediaType: 'youtube',
-    description: 'Driver-facing cabin camera with alert monitoring'
+    description: 'Primary cooking area with inventory usage monitoring'
+  }
+];
+
+// Mock trip data
+interface Trip {
+  id: string;
+  driverName: string;
+  cargoType: string;
+  clientName: string;
+  origin: string;
+  destination: string;
+  status: 'in-transit' | 'delivered' | 'scheduled';
+}
+
+const mockTrips: Trip[] = [
+  {
+    id: 'TRIP-001',
+    driverName: 'John Smith',
+    cargoType: 'Refrigerated Foods',
+    clientName: 'Metro Foods Inc.',
+    origin: 'San Francisco',
+    destination: 'Oakland',
+    status: 'in-transit'
+  },
+  {
+    id: 'TRIP-002',
+    driverName: 'Maria Garcia',
+    cargoType: 'Frozen Goods',
+    clientName: 'Fresh Direct',
+    origin: 'San Jose',
+    destination: 'San Francisco',
+    status: 'scheduled'
+  },
+  {
+    id: 'TRIP-003',
+    driverName: 'David Chen',
+    cargoType: 'Dry Goods',
+    clientName: 'Bay Area Distribution',
+    origin: 'Oakland',
+    destination: 'San Jose',
+    status: 'delivered'
   }
 ];
 
 export default function CameraFeeds() {
-  const [selectedTripId, setSelectedTripId] = useState<string>(mockTrips[0].id);
+  const [selectedLocationId, setSelectedLocationId] = useState<string>(mockLocations[0].id);
   const [activeTab, setActiveTab] = useState<number>(0);
   const [fullscreenFeed, setFullscreenFeed] = useState<CameraFeed | null>(null);
   const [isRefreshing, setIsRefreshing] = useState<Record<string, boolean>>({});
+  const [selectedTripId, setSelectedTripId] = useState<string>(mockTrips[0].id);
+  const [selectedTrip, setSelectedTrip] = useState<Trip | null>(mockTrips[0]);
+
+  const handleLocationChange = (event: SelectChangeEvent<string>) => {
+    setSelectedLocationId(event.target.value);
+  };
 
   const handleTripChange = (event: SelectChangeEvent<string>) => {
     setSelectedTripId(event.target.value);
+    setSelectedTrip(mockTrips.find(trip => trip.id === event.target.value) || null);
   };
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
   };
 
-  const handleToggleFullscreen = (feed: CameraFeed | null) => {
+  const toggleFullscreen = (feed: CameraFeed | null) => {
     setFullscreenFeed(feed);
   };
 
-  const handleRefreshFeed = (feedId: string) => {
-    setIsRefreshing({ ...isRefreshing, [feedId]: true });
+  const handleToggleFullscreen = (feed: CameraFeed | null) => {
+    toggleFullscreen(feed);
+  };
+
+  const handleRefresh = (feedId: string) => {
+    setIsRefreshing((prev) => ({ ...prev, [feedId]: true }));
     
     // Simulate refresh delay
     setTimeout(() => {
-      setIsRefreshing({ ...isRefreshing, [feedId]: false });
-    }, 2000);
+      setIsRefreshing((prev) => ({ ...prev, [feedId]: false }));
+    }, 1500);
   };
-
+  
+  const handleRefreshFeed = (feedId: string) => {
+    handleRefresh(feedId);
+  };
+  
+  // Function to format time
   const formatTime = (dateString: string) => {
-    return new Date(dateString).toLocaleTimeString();
+    const date = new Date(dateString);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
-
-  const getFilteredCameraFeeds = () => {
-    let feeds = mockCameraFeeds.filter(feed => feed.tripId === selectedTripId);
-    
-    switch (activeTab) {
-      case 0: // All
-        return feeds;
-      case 1: // Cabin
-        return feeds.filter(feed => feed.type === 'cabin');
-      case 2: // Cargo
-        return feeds.filter(feed => feed.type === 'cargo');
-      case 3: // Exterior
-        return feeds.filter(feed => feed.type === 'exterior');
-      case 4: // Dock
-        return feeds.filter(feed => feed.type === 'dock');
-      default:
-        return feeds;
-    }
-  };
-
+  
+  // Function to get camera type label
   const getCameraTypeLabel = (type: string) => {
-    switch (type) {
-      case 'cabin':
-        return 'Cabin';
-      case 'cargo':
-        return 'Cargo';
-      case 'exterior':
-        return 'Exterior';
-      default:
-        return type;
+    switch(type) {
+      case 'kitchen': return 'Kitchen';
+      case 'storage': return 'Storage';
+      case 'freezer': return 'Freezer';
+      case 'receiving': return 'Receiving';
+      default: return 'Camera';
     }
   };
 
-  const filteredFeeds = getFilteredCameraFeeds();
-  const selectedTrip = mockTrips.find(trip => trip.id === selectedTripId);
+  // Filter camera feeds by selected location
+  const filteredCameraFeeds = mockCameraFeeds.filter(
+    (feed) => feed.locationId === selectedLocationId
+  );
+
+  // Filter feeds by type based on active tab
+  const tabFilteredFeeds = activeTab === 0 
+    ? filteredCameraFeeds 
+    : filteredCameraFeeds.filter(feed => {
+        switch(activeTab) {
+          case 1: return feed.type === 'kitchen';
+          case 2: return feed.type === 'storage';
+          case 3: return feed.type === 'freezer';
+          case 4: return feed.type === 'receiving';
+          default: return true;
+        }
+      });
+
+  // Function to get camera type icon
+  const getCameraTypeIcon = (type: string) => {
+    switch(type) {
+      case 'kitchen': return <KitchenIcon />;
+      case 'storage': return <InventoryIcon />;
+      case 'freezer': return <FreezerIcon />;
+      case 'receiving': return <ReceivingIcon />;
+      default: return <CameraIcon />;
+    }
+  };
 
   return (
     <Box sx={{ p: 3 }}>
@@ -327,8 +395,8 @@ export default function CameraFeeds() {
           </Box>
           
           <Grid container spacing={3}>
-            {filteredFeeds.length > 0 ? (
-              filteredFeeds.map((feed) => (
+            {tabFilteredFeeds.length > 0 ? (
+              tabFilteredFeeds.map((feed) => (
                 <Grid item xs={12} md={6} lg={4} key={feed.id}>
                   <Card sx={{ 
                     borderRadius: 3, 
@@ -361,6 +429,7 @@ export default function CameraFeeds() {
                             videoUrl={feed.mediaUrl}
                             title={feed.name}
                             autoplay={feed.isLive}
+                            loop={true}
                             height="220px"
                           />
                         </Box>
@@ -615,6 +684,7 @@ export default function CameraFeeds() {
                   videoUrl={fullscreenFeed.mediaUrl}
                   title={fullscreenFeed.name}
                   autoplay={fullscreenFeed.isLive}
+                  loop={true}
                 />
               </Box>
             )}
